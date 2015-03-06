@@ -1,0 +1,37 @@
+Results:
+
+P_v0.1_JR (joinRepeated = True, version with while loop)
+timePrediction = 1241.9618260860443
+ MU = 0.124297837732
+STD = 0.0828544650685
+number of wrongChords = 2734
+
+P_v0.1_notJR (joinRepeated = False, version with while loop)
+timePrediction = 1144.1593880653381
+ MU = 0.166901118411
+STD = 0.088165913294
+number of wrongChords = 3905
+
+P_v0.2_JR (joinRepeated = True, version with for loop)
+timePrediction = 1110.104907989502
+ MU = 0.216687977783
+STD = 0.0846517838581
+number of wrongChords = 2925
+
+P_v0.2_notJR (joinRepeated = False, version with for loop)
+timePrediction = 980.6100649833679
+ MU = 0.331254199954
+STD = 0.0870545440138
+number of wrongChords = 3905
+
+P_master_notJR (joinRepeated = False)
+timePrediction = 730.9293639659882
+ MU = 0.295435995177
+STD = 0.087492015126
+number of wrongChords = 2297
+
+P_master_JR (joinRepeated = True)
+timePrediction = 760.5344378948212
+ MU = 0.217082581416
+STD = 0.0853447214736
+number of wrongChords = 1892
