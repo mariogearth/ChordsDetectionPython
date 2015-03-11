@@ -2,7 +2,7 @@ import chords_textfiles as TF
 import os
 import numpy as np
 import sys
-sys.path.append('/Users/Mario/Dropbox/MTG/chords_detector/mir_eval-master/')
+sys.path.append('/Users/Mario/Dropbox/MTG/ChordsDetectionPython/mir_eval-master/')
 import mir_eval
 import csv
 import timeit
@@ -16,7 +16,7 @@ testfolder = 'test11'
 typeoffolder = ['a_sine_majmin','b_saw_majmin','c_sine_augdim','d_saw_augdim']
 listofaudio = ['chord_sequence_2015-02-26@14\'48\'17.wav','chord_sequence_2015-02-26@14\'43\'00.wav','chord_sequence_2015-02-26@13\'25\'01.wav','chord_sequence_2015-02-26@13\'20\'19.wav']
 listofgt = ['chord_sequence_2015-02-26@14\'48\'17.txt','chord_sequence_2015-02-26@14\'43\'00.txt','chord_sequence_2015-02-26@13\'25\'01.txt','chord_sequence_2015-02-26@13\'20\'19.txt']
-path = '/Users/Mario/Dropbox/MTG/chords_detector/simple-test/test/'
+path = '/Users/Mario/Dropbox/MTG/ChordsDetectionPython/simple-test/test/'
 
 mypath = path + testfolder
 if not os.path.isdir(mypath):
@@ -43,7 +43,7 @@ for j in range(4):
     print 'Saving the predicted files...'
     
     joinrepeated = False
-    algo = 'ChordsDetectionBeats'
+    algo = 'ChordsDetection'
     
     for i in range(len(AU)):
 
@@ -69,7 +69,7 @@ for j in range(4):
     totalMU = []; totalSTD = []; mismatched = []
 
     for i in range(len(GT)):
-    	ref_intervals, ref_labels = mir_eval.io.load_labeled_intervals(folder_GT + lisofgt[j])
+    	ref_intervals, ref_labels = mir_eval.io.load_labeled_intervals(folder_GT + listofgt[j])
     	est_intervals, est_labels = mir_eval.io.load_labeled_intervals(folder_P  + 'P-' + '{0:03d}'.format(i) + '.txt')
     	est_intervals, est_labels = mir_eval.util.adjust_intervals(est_intervals, est_labels, ref_intervals.min(), ref_intervals.max(), mir_eval.chord.NO_CHORD, mir_eval.chord.NO_CHORD)
     	intervals, ref_labels, est_labels = mir_eval.util.merge_labeled_intervals(ref_intervals, ref_labels, est_intervals, est_labels)
@@ -87,7 +87,7 @@ for j in range(4):
     print 'STD = ' + str(np.std(totalSTD)) 
     print 'number of mismatched chords = ' + str(len(mismatched))
 
-# csvname = '/Users/Mario/Dropbox/MTG/chords_detector/simple-test/outMismatched.csv'
+# csvname = '/Users/Mario/Dropbox/MTG/ChordsDetectionPython/simple-test/outMismatched.csv'
 # writer = csv.writer(open(csvname, 'wb'), dialect='excel')
 # for item in mismatched:
 #      writer.writerows([item,])

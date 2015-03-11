@@ -32,7 +32,8 @@ def doPrediction(name,audiopath,algo,zeroFirstTick=False):
     if(algo=='ChordsDetection'):
         chordsdetection = estd.ChordsDetection(windowSize = 1.0, hopSize = hopsize)
         chords, strength = chordsdetection(essentia.array(hpcps))
-        return list(chords)
+        ticks = numpy.array(range(len(hpcps)))*hopsize/44100.0
+        return list(chords), list(ticks)
         
     elif(algo=='ChordsDetectionBeats'):
         mintempo = 30; maxtempo = 220
@@ -52,8 +53,10 @@ def doPrediction(name,audiopath,algo,zeroFirstTick=False):
 
 def savePredictedFile(_chords,_ticks,fileID,predictPath,joinRepeated=True):
     
-    assert(len(_ticks)>len(_chords))
-
+    #assert(len(_ticks)>len(_chords))
+    if(len(_ticks)==len(_chords)):
+        del _chords[-1]
+        
     while(len(_chords)+1<len(_ticks)):
         del _ticks[-1:]
 
