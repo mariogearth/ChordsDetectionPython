@@ -3,6 +3,7 @@ from essentia.standard import *
 import essentia.standard as estd    
 from pylab import *
 import numpy
+import pdb
 
 def doPrediction(name,audiopath,algo,zeroFirstTick=False):
 
@@ -20,7 +21,7 @@ def doPrediction(name,audiopath,algo,zeroFirstTick=False):
     hpcp = estd.HPCP(harmonics = harmonix, weightType = weighttype, bandPreset = bandpreset, minFrequency = minfrequency, maxFrequency = maxfrequency)
 
     specpeaks = []; hpcps = []
-    framesize = 8192
+    framesize = 4096
     hopsize = 1024
 
     for frame in FrameGenerator(audio, frameSize = framesize, hopSize = hopsize):
@@ -32,21 +33,24 @@ def doPrediction(name,audiopath,algo,zeroFirstTick=False):
     if(algo=='ChordsDetection'):
         chordsdetection = estd.ChordsDetection(windowSize = 1.0, hopSize = hopsize)
         chords, strength = chordsdetection(essentia.array(hpcps))
-        ticks = numpy.array(range(len(hpcps)))*hopsize/44100.0
-        return list(chords), list(ticks)
+        #ticks = numpy.array(range(len(hpcps)))*hopsize/44100.0
+        return list(chords) #, list(ticks)
         
     elif(algo=='ChordsDetectionBeats'):
         mintempo = 30; maxtempo = 220
         degaraBTalgo = estd.BeatTrackerDegara()
-        ticks = degaraBTalgo(audio)
-        #ticks = numpy.array(range(len(hpcps)))*hopsize/44100.0
+        #ticks = degaraBTalgo(audio)
+        ticks = numpy.array(range(len(hpcps)))*hopsize/44100.0
         
         if(zeroFirstTick==True):
             _ticks.insert(0,0.0)
         else:
             pass
-        chordsdetection = estd.ChordsDetectionBeats(hopSize = hopsize, numHarmonics = harmonix+1)
-        chords, strength = chordsdetection(essentia.array(hpcps),essentia.array(ticks))
+        chordsdetection = estd.ChordsDetectionBeats(hopSize = hopsize)
+        chords, ticks = chordsdetection(essentia.array(hpcps),essentia.array(ticks))
+        
+        
+        
         return list(chords), list(ticks)
     else:
         return 'Error: incorrect algorithm name'
@@ -89,14 +93,14 @@ def savePredictedFile(_chords,_ticks,fileID,predictPath,joinRepeated=True):
     f = open(path, "w")
     
     for i in range(0,len(P_list)):
-        if(P_list[i][2].find("m")>0):
-            P_list[i][2] = (P_list[i][2])[0] + ":min"
-        elif(P_list[i][2].find("aug")>0):
-            P_list[i][2] = (P_list[i][2])[0] + ":aug"
-        elif(P_list[i][2].find("dim")>0):
-            P_list[i][2] = (P_list[i][2])[0] + ":dim"
-        else:
-            pass
+        # if(P_list[i][2].find("m")>0):
+#             P_list[i][2] = (P_list[i][2])[0] + ":min"
+#         elif(P_list[i][2].find("aug")>0):
+#             P_list[i][2] = (P_list[i][2])[0] + ":aug"
+#         elif(P_list[i][2].find("dim")>0):
+#             P_list[i][2] = (P_list[i][2])[0] + ":dim"
+#         else:
+#             pass
         f.write(str(float(P_list[i][0])) + " " + str(float(P_list[i][1])) + " " + str(P_list[i][2]) + '\n' )
     f.close()
     

@@ -1,3 +1,5 @@
+#main_script_master_simple.py
+
 import chords_textfiles as TF
 import os
 import numpy as np
@@ -8,7 +10,7 @@ import csv
 import timeit
 import pdb
 import shutil
-import postprocessing as postproc
+import math
 
 # #~~~~~~~~~~~~~ Save text files with predictions from Essentia
 start = timeit.default_timer()
@@ -20,45 +22,52 @@ listofgt = ['chord_sequence_2015-02-26@14\'48\'17.txt','chord_sequence_2015-02-2
 path = '/Users/Mario/Dropbox/MTG/ChordsDetectionPython/simple-test/test/'
 
 mypath = path + testfolder
+
 if not os.path.isdir(mypath):
-    os.makedirs(mypath)
-elif os.path.isdir(mypath):
-    shutil.rmtree(mypath)
-    os.makedirs(mypath)
+   os.makedirs(mypath)
+   
    
 for j in range(4):
-    
     _folder = path + testfolder + '/' + testfolder + typeoffolder[j] + '_100chords/'
-    
     if not os.path.isdir(_folder):
         os.makedirs(_folder)
         folder_P = _folder + 'P/'
         os.makedirs(folder_P)
         
         folder_GT = path + 'test1/test1' + typeoffolder[j] + '_100chords/GT/' 
-        folder_audio = path + 'test1/test1' + typeoffolder[j] + '_100chords/audio/' 
+        folder_audio = path + 'test1/test1' + typeoffolder[j] + '_100chords/audio/'
         
     print 'folder = ' + repr(_folder)
-    
     AU = os.listdir(folder_audio)
     if '.DS_Store' in AU:
         AU.remove('.DS_Store')
-
+    
     print 'Saving the predicted files...'
     
-    joinrepeated = True
-    algo = 'ChordsDetectionBeats'
-    
-    for i in range(len(AU)):
+    joinrepeated = False
+    algo = 'ChordsDetection'
 
-        fileID = '{0:03d}'.format(i)
+
+    
+    hopsize=1024
+    fs=44100.0 
+    framesWindow = int((fs/hopsize) - 1)  
+    for k in range(len(AU)):
+    
+        fileID = '{0:03d}'.format(k)
+        chords_P = TF.doPrediction(AU[k],folder_audio,algo)
+        chords2 = []; time2 = [] 
         
-        
-        chords_P, ticks_P = TF.doPrediction(AU[i],folder_audio,algo)
         #pdb.set_trace()
-        chords_P, ticks_P = postproc.sliding_window(chords_P,ticks_P)
+        for i in range(framesWindow,len(chords_P),framesWindow):        
+            if(i >= len(chords_P)):
+                break
+            chords2.append(chords_P[i])
+            time2.append(float("{0:.4f}".format(i*hopsize/fs)))
         
-        TF.savePredictedFile(chords_P,ticks_P,fileID,folder_P,joinrepeated)
+        time2.insert(0,0.0)
+        
+        TF.savePredictedFile(chords2,time2,fileID,folder_P,joinrepeated)
 
     stop = timeit.default_timer()
     timePrediction = stop - start
@@ -95,10 +104,10 @@ for j in range(4):
     print 'STD = ' + str(np.std(totalSTD)) 
     print 'number of mismatched chords = ' + str(len(mismatched))
 
-# csvname = '/Users/Mario/Dropbox/MTG/ChordsDetectionPython/simple-test/outMismatched.csv'
-# writer = csv.writer(open(csvname, 'wb'), dialect='excel')
-# for item in mismatched:
-#      writer.writerows([item,])
+    # csvname = '/Users/Mario/Dropbox/MTG/ChordsDetectionPython/beatles/1tests/chords/' + typefolder + 'outWrong-' + typefolder[:-1] + '.csv'
+#     writer = csv.writer(open(csvname, 'wb'), dialect='excel')
+#     for item in wrongChords:
+#          writer.writerows([item,])
 
 
 
